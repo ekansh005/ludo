@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ludo/block.dart';
+import 'package:ludo/home_lane.dart';
+import 'package:ludo/model/position.dart';
 import 'package:ludo/rest_area.dart';
+import 'package:ludo/start_block.dart';
 
 class Board extends StatelessWidget {
   @override
@@ -8,21 +11,33 @@ class Board extends StatelessWidget {
     var mediaQuery = MediaQuery.of(context);
     var totalWidth = mediaQuery.size.width;
     var blockWidth = totalWidth / 15;
-    Widget _buildBlock(int row, int col) {
-      return Container(
-        width: blockWidth,
-        height: blockWidth,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Colors.black, width: 1),
-        ),
-      );
-    }
 
     Widget _buildRow(int row) {
       List<Widget> rowWidgets = [];
-      for (var i = 0; i < 15; i++) {
-        rowWidgets.insert(i, _buildBlock(row, i));
+      final starPositions = [
+        Position(2, 6),
+        Position(6, 12),
+        Position(8, 2),
+        Position(12, 8)
+      ];
+
+      bool isStar(row, col) {
+        int index = starPositions
+            .indexWhere((element) => element.row == row && element.col == col);
+        return index > -1;
+      }
+
+      for (var column = 0; column < 15; column++) {
+        isStar(row, column)
+            ? rowWidgets.insert(
+                column,
+                Block(
+                  color: Colors.white,
+                  width: blockWidth,
+                  icon: Icon(Icons.stars),
+                ))
+            : rowWidgets.insert(
+                column, Block(color: Colors.white, width: blockWidth));
       }
       return Row(
         children: rowWidgets,
@@ -31,46 +46,11 @@ class Board extends StatelessWidget {
 
     Widget _buildBoard() {
       List<Widget> columnWidgets = [];
-      for (var i = 0; i < 15; i++) {
-        columnWidgets.insert(i, _buildRow(i));
+      for (var row = 0; row < 15; row++) {
+        columnWidgets.insert(row, _buildRow(row));
       }
       return Column(
         children: columnWidgets,
-      );
-    }
-
-    Container buildHomeLane(Color color, EdgeInsetsGeometry margin,
-        bool isVertical, MainAxisAlignment mainAxisAlignment) {
-      return Container(
-        margin: margin,
-        child: isVertical
-            ? Column(
-                mainAxisAlignment: mainAxisAlignment,
-                children: <Widget>[
-                  Block(color, blockWidth),
-                  Block(color, blockWidth),
-                  Block(color, blockWidth),
-                  Block(color, blockWidth),
-                  Block(color, blockWidth),
-                ],
-              )
-            : Row(
-                mainAxisAlignment: mainAxisAlignment,
-                children: <Widget>[
-                  Block(color, blockWidth),
-                  Block(color, blockWidth),
-                  Block(color, blockWidth),
-                  Block(color, blockWidth),
-                  Block(color, blockWidth),
-                ],
-              ),
-      );
-    }
-
-    Container buildStartBlock(Color color, EdgeInsetsGeometry margin) {
-      return Container(
-        margin: margin,
-        child: Block(color, blockWidth),
       );
     }
 
@@ -87,15 +67,17 @@ class Board extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 RestArea(Colors.red, blockWidth),
-                buildStartBlock(
-                  Colors.red,
-                  EdgeInsets.fromLTRB(0, blockWidth * 4, 0, blockWidth),
+                StartBlock(
+                  color: Colors.red,
+                  margin: EdgeInsets.fromLTRB(0, blockWidth * 4, 0, blockWidth),
+                  blockWidth: blockWidth,
                 ),
-                buildHomeLane(
-                  Colors.red,
-                  EdgeInsets.fromLTRB(0, 0, 0, blockWidth),
-                  true,
-                  MainAxisAlignment.end,
+                HomeLane(
+                  color: Colors.red,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, blockWidth),
+                  isVertical: true,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  blockWidth: blockWidth,
                 ),
               ],
             ),
@@ -107,15 +89,17 @@ class Board extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 RestArea(Colors.blue, blockWidth),
-                buildStartBlock(
-                  Colors.blue,
-                  EdgeInsets.fromLTRB(blockWidth, 0, blockWidth * 4, 0),
+                StartBlock(
+                  color: Colors.blue,
+                  margin: EdgeInsets.fromLTRB(blockWidth, 0, blockWidth * 4, 0),
+                  blockWidth: blockWidth,
                 ),
-                buildHomeLane(
-                  Colors.blue,
-                  EdgeInsets.fromLTRB(blockWidth, 0, 0, 0),
-                  false,
-                  MainAxisAlignment.start,
+                HomeLane(
+                  color: Colors.blue,
+                  margin: EdgeInsets.fromLTRB(blockWidth, 0, 0, 0),
+                  isVertical: false,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  blockWidth: blockWidth,
                 ),
               ],
             ),
@@ -127,15 +111,17 @@ class Board extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                buildHomeLane(
-                  Colors.green,
-                  EdgeInsets.fromLTRB(blockWidth * 7, blockWidth, 0, 0),
-                  true,
-                  MainAxisAlignment.start,
+                HomeLane(
+                  color: Colors.green,
+                  margin: EdgeInsets.fromLTRB(blockWidth * 7, blockWidth, 0, 0),
+                  isVertical: true,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  blockWidth: blockWidth,
                 ),
-                buildStartBlock(
-                  Colors.green,
-                  EdgeInsets.fromLTRB(0, blockWidth, 0, blockWidth),
+                StartBlock(
+                  color: Colors.green,
+                  margin: EdgeInsets.fromLTRB(0, blockWidth, 0, blockWidth),
+                  blockWidth: blockWidth,
                 ),
                 RestArea(Colors.green, blockWidth),
               ],
@@ -148,15 +134,18 @@ class Board extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                buildHomeLane(
-                  Colors.yellow,
-                  EdgeInsets.fromLTRB(blockWidth * 9, 0, 0, 0),
-                  false,
-                  MainAxisAlignment.start,
+                HomeLane(
+                  color: Colors.yellow,
+                  margin: EdgeInsets.fromLTRB(blockWidth * 9, 0, 0, 0),
+                  isVertical: false,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  blockWidth: blockWidth,
                 ),
-                buildStartBlock(
-                  Colors.yellow,
-                  EdgeInsets.fromLTRB(blockWidth * 11, 0, blockWidth, 0),
+                StartBlock(
+                  color: Colors.yellow,
+                  margin:
+                      EdgeInsets.fromLTRB(blockWidth * 11, 0, blockWidth, 0),
+                  blockWidth: blockWidth,
                 ),
                 RestArea(Colors.yellow, blockWidth),
               ],

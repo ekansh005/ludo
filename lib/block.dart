@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class Block extends StatelessWidget {
   final Color color;
   final double width;
+  final Icon icon;
 
-  Block(
-    this.color,
-    this.width,
-  );
+  Block({
+    @required this.color,
+    @required this.width,
+    this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +23,7 @@ class Block extends StatelessWidget {
         ),
         color: color,
       ),
+      child: icon ?? Container(),
     );
   }
 }

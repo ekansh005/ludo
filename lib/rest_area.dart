@@ -39,15 +39,15 @@ class RestArea extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Block(color, blockWidth),
-                Block(color, blockWidth)
+                Block(color: color, width: blockWidth),
+                Block(color: color, width: blockWidth),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Block(color, blockWidth),
-                Block(color, blockWidth)
+                Block(color: color, width: blockWidth),
+                Block(color: color, width: blockWidth),
               ],
             )
           ],
